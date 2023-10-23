@@ -1,20 +1,26 @@
+## creating group of on duty software engineers for the day
+
+import datetime
+x = datetime.datetime.now()
+
+
 {
-    "ok": true,
+    "ok": True,
     "usergroup": {
-        "id": "S0615G0KT",
-        "team_id": "T060RNRCH",
-        "is_usergroup": true,
-        "name": "Marketing Team",
-        "description": "Marketing gurus, PR experts and product advocates.",
-        "handle": "marketing-team",
-        "is_external": false,
+        "id": "{ID}",
+        "team_id": "{team_id}",
+        "is_usergroup": True,
+        "name": "Devs On Duty",
+        "description": "Software Developers, currently on duty.",
+        "handle": "devs-on-duty",
+        "is_external": False,
         "date_create": 1446746793,
         "date_update": 1446746793,
         "date_delete": 0,
-        "auto_type": null,
-        "created_by": "U060RNRCZ",
-        "updated_by": "U060RNRCZ",
-        "deleted_by": null,
+        "auto_type": None,
+        "created_by": "jbrooks_create_group",
+        "updated_by": "jbrooks_create_group",
+        "deleted_by": None,
         "prefs": {
             "channels": [
 
