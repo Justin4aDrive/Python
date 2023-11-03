@@ -22,6 +22,29 @@ class Sprite(turtle.Turtle):
      def move(self):
           self.fd(self.speed)
 
+          if self.xcor() > 390:  #boundry detection
+               self.setx(390)
+               self.rt(60)
+          if self.xcor() < -390:
+               self.setx(-390)
+               self.rt(60)
+          if self.ycor() > 315:
+               self.sety(315)
+               self.rt(60)
+          if self.ycor() < -275:
+               self.sety(-275)
+               self.rt(60)
+     
+     def is_collision(self, other):
+          if (self.xcor() >= (other.xcor() -20)) and \
+          (self.xcor() <= (other.xcor() +20)) and \
+          (self.ycor() >= (other.ycor() -20)) and \
+          (self.ycor() <= (other.ycor() +20)):
+               return True
+          else:
+               return False
+
+
 class Player(Sprite):
      def __init__(self, spriteshape, color, startx, starty):
           Sprite.__init__(self, spriteshape, color, startx, starty)
@@ -37,25 +60,67 @@ class Player(Sprite):
      def slower(self):
           self.speed -= 1
 
+class Enemy(Sprite):
+     def __init__(self, spriteshape, color, startx, starty):
+          Sprite.__init__(self, spriteshape, color, startx, starty)
+          self.speed = 6
+          self.setheading(random.randint(0,360))
+
+
+
+class Game():
+     def __init__(self):
+          self.level = 1
+          self.score = 0
+          self.state = "playing"
+          self.pen = turtle.Turtle()
+          self.lives = 3                ### duplicate to player?
+
+     def draw_border(self):        #game field border
+          self.pen.speed(0)
+          self.pen.color("white")
+          self.pen.pensize(3)
+          self.pen.penup()
+          self.pen.goto(-400,320)
+          self.pen.pendown()
+          for side in range(2):
+               self.pen.fd(800)
+               self.pen.rt(90)
+               self.pen.fd(600)
+               self.pen.rt(90)
+          self.pen.penup()
+          self.pen.ht()
+
+     
+
+#Game opbject creation
+game = Game()
+
+#Drawing field border
+game.draw_border()
 
 #Sprite creation
 player = Player("arrow", "green", 0, 0)
+enemy = Enemy("circle", "yellow", -100, 0)
 
 #key bindings
 turtle.onkey(player.turn_left, "Left")
 turtle.onkey(player.turn_right, "Right")
 turtle.onkey(player.faster, "Up")
 turtle.onkey(player.slower, "Down")
-turtle.onkey(player.shoot, "Space")
+#turtle.onkey(player.shoot, "Space")
 turtle.listen()
 
 
 #primary game loop
 while True:
      player.move()
+     enemy.move()
 
-
-
+     if player.is_collision(enemy):  #collision detection
+          x = random.randint(-250,250)
+          y = random.randint(-250,250)
+          enemy.goto(x,y)
 
 
 delay = input("Press Enter to quit.")
