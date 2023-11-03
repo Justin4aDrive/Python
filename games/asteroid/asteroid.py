@@ -19,8 +19,41 @@ class Sprite(turtle.Turtle):
           self.goto(startx, starty)
           self.speed = 1
 
+     def move(self):
+          self.fd(self.speed)
+
+class Player(Sprite):
+     def __init__(self, spriteshape, color, startx, starty):
+          Sprite.__init__(self, spriteshape, color, startx, starty)
+          self.speed = 4
+          self.lives = 3
+     
+     def turn_left(self):
+          self.lt(45)
+     def turn_right(self):
+          self.rt(45)
+     def faster(self):
+          self.speed += 1
+     def slower(self):
+          self.speed -= 1
+
+
 #Sprite creation
-player = Sprite("arrow", "green", 0, 0)
+player = Player("arrow", "green", 0, 0)
+
+#key bindings
+turtle.onkey(player.turn_left, "Left")
+turtle.onkey(player.turn_right, "Right")
+turtle.onkey(player.faster, "Up")
+turtle.onkey(player.slower, "Down")
+turtle.onkey(player.shoot, "Space")
+turtle.listen()
+
+
+#primary game loop
+while True:
+     player.move()
+
 
 
 
