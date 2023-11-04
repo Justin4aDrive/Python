@@ -60,6 +60,27 @@ class Player(Sprite):
      def slower(self):
           self.speed -= 1
 
+class Ally(Sprite):
+     def __init__(self, spriteshape, color, startx, starty):
+          Sprite.__init__(self, spriteshape, color, startx, starty)
+          self.speed = 8
+          self.setheading(random.randint(0,360))
+     def move(self):
+          self.fd(self.speed)
+
+          if self.xcor() > 390:  #boundry detection
+               self.setx(390)
+               self.lt(60)
+          if self.xcor() < -390:
+               self.setx(-390)
+               self.lt(60)
+          if self.ycor() > 315:
+               self.sety(315)
+               self.lt(60)
+          if self.ycor() < -275:
+               self.sety(-275)
+               self.lt(60)
+
 class Enemy(Sprite):
      def __init__(self, spriteshape, color, startx, starty):
           Sprite.__init__(self, spriteshape, color, startx, starty)
@@ -112,17 +133,24 @@ class Game():
                self.pen.rt(90)
           self.pen.penup()
           self.pen.ht()
+          self.pen.pendown()
 
-     
+     def show_status(self):
+          self.pen.undo()
+          msg = "Score: %s" %(self.score)
+          self.pen.color("red")
+          self.pen.penup()
+          self.pen.goto(-400,328)
+          self.pen.write(msg, font=("Arial", 16, "bold"))
 
-#Game opbject creation
-game = Game()
 
-#Drawing field border
-game.draw_border()
+game = Game()       #Game object creation
+game.draw_border()     #Drawing field border
+game.show_status()  #game status
 
 #Sprite creation
 player = Player("arrow", "green", 0, 0)
+ally = Ally("square", "white", 0, 0)
 enemy = Enemy("circle", "yellow", -100, 0)
 missile = Missile("arrow", "green", 0, 0)
 
@@ -138,6 +166,7 @@ turtle.listen()
 #primary game loop
 while True:
      player.move()
+     ally.move()
      enemy.move()
      missile.move()
 
@@ -145,12 +174,24 @@ while True:
           x = random.randint(-250,250)
           y = random.randint(-250,250)
           enemy.goto(x,y)
-     
+          game.score -= 50  #increase score
+          game.show_status()
+
      if missile.is_collision(enemy):
           x = random.randint(-250,250)
           y = random.randint(-250,250)
           enemy.goto(x,y)
           missile.status="ready"
+          game.score += 100  #increase score
+          game.show_status()
+
+     if missile.is_collision(ally):
+          x = random.randint(-250,250)
+          y = random.randint(-250,250)
+          ally.goto(x,y)
+          missile.status="ready"
+          game.score -= 100  #decrease score
+          game.show_status()
 
 
 delay = input("Press Enter to quit.")
