@@ -67,6 +67,7 @@ class Sprite(turtle.Turtle):
 class Player(Sprite):
      def __init__(self, spriteshape, color, startx, starty):
           Sprite.__init__(self, spriteshape, color, startx, starty)
+          self.shapesize(stretch_wid=0.6, stretch_len=1.1, outline=None)
           self.speed = 4
           self.lives = 3
      
@@ -98,7 +99,6 @@ class Missile(Sprite):
           self.speed = 20
           self.status = "ready"
           self.goto(-1000, 1000)
-
      def fire(self):
           if self.status == "ready":
                mixer.Sound.play(missile_sound)
@@ -114,6 +114,25 @@ class Missile(Sprite):
                self.ycor() > 290 or self.ycor() < -290:  #boundry detection
                self.goto(-1000,1000)
                self.status = "ready"
+
+class Explosion(Sprite):
+     def __init__(self, spriteshape, color, startx, starty):
+          Sprite.__init__(self, spriteshape, color, startx, starty)
+          self.shapesize(stretch_wid=0.1, stretch_len=0.1, outline=None)
+          self.goto(-1000,-1000)
+          self.frame = 0
+     def explode(self, startx, starty):
+          self.goto(startx,starty)
+          self.setheading(random.randint(0,360))
+          self.frame = 1
+     def move(self):
+          if self.frame > 0:
+               self.fd(10)
+               self.frame += 1
+          if self.frame > 15:
+               self.frame = 0
+               self.goto(-1000, -1000)
+
 
 
 class Game():
@@ -158,6 +177,9 @@ player = Player("arrow", "green", 0, 0)
 #ally = Ally("square", "white", 0, 0)
 #enemy = Enemy("circle", "yellow", -100, 0)
 missile = Missile("arrow", "green", 0, 0)
+explosions = []
+for i in range (20):
+     explosions.append(Explosion("circle", "orange", 0,0)) 
 allies=[]
 for i in range (6):
      allies.append(Ally("square", "white", 100, 0))
@@ -192,6 +214,8 @@ while True:
                missile.status="ready"
                game.score -= 100  #decrease score
                game.show_status()
+               for explosion in explosions:  #adding explosion effect
+                    explosion.explode(missile.xcor(), missile.ycor())         
 
      for enemy in enemies:
           enemy.move()
@@ -211,6 +235,11 @@ while True:
                missile.status="ready"
                game.score += 100  #increase score
                game.show_status()
+               for explosion in explosions:  #adding explosion effect
+                    explosion.explode(missile.xcor(), missile.ycor())
+     
+     for explosion in explosions:
+          explosion.move()
 
 
 delay = input("Press Enter to quit.")
