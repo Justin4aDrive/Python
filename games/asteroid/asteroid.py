@@ -167,9 +167,15 @@ game.show_status()  #game status
 
 #Sprite creation
 player = Player("arrow", "green", 0, 0)
-ally = Ally("square", "white", 0, 0)
-enemy = Enemy("circle", "yellow", -100, 0)
+#ally = Ally("square", "white", 0, 0)
+#enemy = Enemy("circle", "yellow", -100, 0)
 missile = Missile("arrow", "green", 0, 0)
+allies=[]
+for i in range (6):
+     allies.append(Ally("square", "white", 100, 0))
+enemies=[]
+for i in range (6):
+     enemies.append(Enemy("circle", "yellow", -100, 0))
 
 #key bindings
 turtle.onkey(player.turn_left, "Left")
@@ -183,35 +189,38 @@ turtle.listen()
 #primary game loop
 while True:
      player.move()
-     ally.move()
-     enemy.move()
+     #ally.move()
+     #enemy.move()
      missile.move()
+     for ally in allies:
+          ally.move()
+          if missile.is_collision(ally):
+               mixer.Sound.play(explosion_sound)
+               x = random.randint(-250,250)
+               y = random.randint(-250,250)
+               ally.goto(x,y)
+               missile.status="ready"
+               game.score -= 100  #decrease score
+               game.show_status()
 
-     if player.is_collision(enemy):  #collision detection
-          mixer.Sound.play(crash_sound)
-          x = random.randint(-250,250)
-          y = random.randint(-250,250)
-          enemy.goto(x,y)
-          game.score -= 50  #decrease score
-          game.show_status()
+     for enemy in enemies:
+          enemy.move()
+          if player.is_collision(enemy):  #collision detection
+               mixer.Sound.play(crash_sound)
+               x = random.randint(-250,250)
+               y = random.randint(-250,250)
+               enemy.goto(x,y)
+               game.score -= 50  #decrease score
+               game.show_status()
 
-     if missile.is_collision(enemy):
-          mixer.Sound.play(explosion_sound)
-          x = random.randint(-250,250)
-          y = random.randint(-250,250)
-          enemy.goto(x,y)
-          missile.status="ready"
-          game.score += 100  #increase score
-          game.show_status()
-
-     if missile.is_collision(ally):
-          mixer.Sound.play(explosion_sound)
-          x = random.randint(-250,250)
-          y = random.randint(-250,250)
-          ally.goto(x,y)
-          missile.status="ready"
-          game.score -= 100  #decrease score
-          game.show_status()
+          if missile.is_collision(enemy):
+               mixer.Sound.play(explosion_sound)
+               x = random.randint(-250,250)
+               y = random.randint(-250,250)
+               enemy.goto(x,y)
+               missile.status="ready"
+               game.score += 100  #increase score
+               game.show_status()
 
 
 delay = input("Press Enter to quit.")
