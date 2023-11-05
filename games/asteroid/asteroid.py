@@ -1,5 +1,6 @@
 import os
 import random
+from pygame import mixer
 
 import turtle
 turtle.fd(0)      #show game window
@@ -8,6 +9,21 @@ turtle.bgcolor("black")  #background color
 turtle.ht()     #hide deault turtle
 turtle.setundobuffer(1)  #save to memory
 turtle.tracer(1)  #drawing speed
+
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+mixer.init()  #initialize mixer for sound
+mixer.music.load('sound/grooving.mp3')
+mixer.music.set_volume(0.1)
+mixer.music.play()
+
+missile_sound = mixer.Sound("sound/missile.mp3")
+missile_sound.set_volume(0.05)
+crash_sound = mixer.Sound("sound/collision.mp3")
+crash_sound.set_volume(0.5)
+explosion_sound = mixer.Sound("sound/explosion.mp3")
+explosion_sound.set_volume(0.8)
+
 
 class Sprite(turtle.Turtle):
      def __init__(self, spriteshape, color, startx, starty):
@@ -97,6 +113,7 @@ class Missile(Sprite):
 
      def fire(self):
           if self.status == "ready":
+               mixer.Sound.play(missile_sound)
                self.goto(player.xcor(), player.ycor())
                self.setheading(player.heading())
                self.status = "fired"
@@ -171,13 +188,15 @@ while True:
      missile.move()
 
      if player.is_collision(enemy):  #collision detection
+          mixer.Sound.play(crash_sound)
           x = random.randint(-250,250)
           y = random.randint(-250,250)
           enemy.goto(x,y)
-          game.score -= 50  #increase score
+          game.score -= 50  #decrease score
           game.show_status()
 
      if missile.is_collision(enemy):
+          mixer.Sound.play(explosion_sound)
           x = random.randint(-250,250)
           y = random.randint(-250,250)
           enemy.goto(x,y)
@@ -186,6 +205,7 @@ while True:
           game.show_status()
 
      if missile.is_collision(ally):
+          mixer.Sound.play(explosion_sound)
           x = random.randint(-250,250)
           y = random.randint(-250,250)
           ally.goto(x,y)
