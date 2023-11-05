@@ -1,16 +1,19 @@
 import os
-import random
 from pygame import mixer
-
+import random
+import time
 import turtle
-turtle.fd(0)      #show game window
-turtle.speed(0)  #animation speed
-turtle.bgcolor("black")  #background color
-turtle.ht()     #hide deault turtle
-turtle.setundobuffer(1)  #save to memory
-turtle.tracer(1)  #drawing speed
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+turtle.fd(0)      #show game window
+turtle.title("Space Shooter")
+turtle.speed(0)  #animation speed
+turtle.bgcolor("black")  #background color
+turtle.bgpic("image/galaxy.gif")
+turtle.ht()     #hide deault turtle
+turtle.setundobuffer(1)  #save to memory
+turtle.tracer(0)  #drawing speed
 
 mixer.init()  #initialize mixer for sound
 mixer.music.load('sound/grooving.mp3')
@@ -44,11 +47,11 @@ class Sprite(turtle.Turtle):
           if self.xcor() < -390:
                self.setx(-390)
                self.rt(60)
-          if self.ycor() > 315:
-               self.sety(315)
+          if self.ycor() > 290:
+               self.sety(290)
                self.rt(60)
-          if self.ycor() < -275:
-               self.sety(-275)
+          if self.ycor() < -290:
+               self.sety(-290)
                self.rt(60)
      
      def is_collision(self, other):
@@ -81,21 +84,6 @@ class Ally(Sprite):
           Sprite.__init__(self, spriteshape, color, startx, starty)
           self.speed = 8
           self.setheading(random.randint(0,360))
-     def move(self):
-          self.fd(self.speed)
-
-          if self.xcor() > 390:  #boundry detection
-               self.setx(390)
-               self.lt(60)
-          if self.xcor() < -390:
-               self.setx(-390)
-               self.lt(60)
-          if self.ycor() > 315:
-               self.sety(315)
-               self.lt(60)
-          if self.ycor() < -275:
-               self.sety(-275)
-               self.lt(60)
 
 class Enemy(Sprite):
      def __init__(self, spriteshape, color, startx, starty):
@@ -123,7 +111,7 @@ class Missile(Sprite):
           if self.status == "fired":
                self.fd(self.speed)
           if self.xcor() > 390 or self.xcor() < -390 or \
-               self.ycor() > 315 or self.ycor() < -275:  #boundry detection
+               self.ycor() > 290 or self.ycor() < -290:  #boundry detection
                self.goto(-1000,1000)
                self.status = "ready"
 
@@ -141,7 +129,7 @@ class Game():
           self.pen.color("white")
           self.pen.pensize(3)
           self.pen.penup()
-          self.pen.goto(-400,320)
+          self.pen.goto(-400,300)
           self.pen.pendown()
           for side in range(2):
                self.pen.fd(800)
@@ -188,6 +176,8 @@ turtle.listen()
 
 #primary game loop
 while True:
+     turtle.update()
+     time.sleep(0.05)
      player.move()
      #ally.move()
      #enemy.move()
