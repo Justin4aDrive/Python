@@ -27,6 +27,7 @@ crash_sound.set_volume(0.5)
 explosion_sound = mixer.Sound("sound/explosion.mp3")
 explosion_sound.set_volume(0.8)
 
+turtle.register_shape("diamond", ((0, 0), (10, 10), (20, 0), (10, -10)))
 
 class Sprite(turtle.Turtle):
      def __init__(self, spriteshape, color, startx, starty):
@@ -67,9 +68,9 @@ class Sprite(turtle.Turtle):
 class Player(Sprite):
      def __init__(self, spriteshape, color, startx, starty):
           Sprite.__init__(self, spriteshape, color, startx, starty)
-          self.shapesize(stretch_wid=0.6, stretch_len=1.1, outline=None)
+          self.shapesize(stretch_wid=0.7, stretch_len=1.5, outline=None)
           self.speed = 4
-          self.lives = 3
+          #self.lives = 3
      
      def turn_left(self):
           self.lt(45)
@@ -83,12 +84,14 @@ class Player(Sprite):
 class Ally(Sprite):
      def __init__(self, spriteshape, color, startx, starty):
           Sprite.__init__(self, spriteshape, color, startx, starty)
+          self.shapesize(stretch_wid=0.3, stretch_len=1.2, outline=None)
           self.speed = 8
           self.setheading(random.randint(0,360))
 
 class Enemy(Sprite):
      def __init__(self, spriteshape, color, startx, starty):
           Sprite.__init__(self, spriteshape, color, startx, starty)
+          self.shapesize(stretch_wid=0.5, stretch_len=1.2, outline=None)
           self.speed = 6
           self.setheading(random.randint(0,360))
 
@@ -161,7 +164,7 @@ class Game():
 
      def show_status(self):
           self.pen.undo()
-          msg = "Score: %s" %(self.score)
+          msg = "Score: %s" %(self.score) + "    " + "Lives: %s" %(self.lives) 
           self.pen.color("red")
           self.pen.penup()
           self.pen.goto(-400,328)
@@ -197,7 +200,8 @@ turtle.listen()
 
 
 #primary game loop
-while True:
+while game.lives > 0:
+     
      turtle.update()
      time.sleep(0.05)
      player.move()
@@ -225,6 +229,7 @@ while True:
                y = random.randint(-250,250)
                enemy.goto(x,y)
                game.score -= 50  #decrease score
+               game.lives -= 1
                game.show_status()
 
           if missile.is_collision(enemy):
@@ -240,6 +245,7 @@ while True:
      
      for explosion in explosions:
           explosion.move()
+
 
 
 delay = input("Press Enter to quit.")
